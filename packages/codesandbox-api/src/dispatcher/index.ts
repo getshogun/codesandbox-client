@@ -27,7 +27,7 @@ function checkIsStandalone() {
 }
 
 // Whether the tab has a connection with the editor
-export const isStandalone = checkIsStandalone();
+export const isStandalone = false;
 
 let resolveIframeHandshake: () => void;
 

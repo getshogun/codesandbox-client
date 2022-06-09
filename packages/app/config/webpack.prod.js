@@ -14,7 +14,7 @@ const VERSION = require('@codesandbox/common/lib/version').default;
 // const childProcess = require('child_process');
 const commonConfig = require('./webpack.common');
 
-const publicPath = '/';
+const publicPath = '/_bundler/';
 // const isMaster =
 //   childProcess
 //     .execSync(`git branch | grep \\* | cut -d ' ' -f2`)

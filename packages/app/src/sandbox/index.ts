@@ -77,68 +77,6 @@ requirePolyfills().then(() => {
 
     sendReady();
   }
-
-  if (process.env.NODE_ENV === 'test' || isStandalone) {
-    // We need to fetch the sandbox ourselves...
-    const id = getSandboxId();
-    window
-      .fetch(host + `/api/v1/sandboxes/${id}`, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Basic ${getPreviewSecret()}`,
-        },
-        credentials: 'include',
-        mode: 'cors',
-      })
-      .then(res => {
-        if (res.status === 404) {
-          show404(id);
-        }
-        return res.json();
-      })
-      .then(res => {
-        const camelized: any = camelizeKeys(res);
-        camelized.data.npmDependencies = res.data.npm_dependencies;
-
-        return camelized;
-      })
-      .then(x => {
-        const moduleObject = {};
-
-        // We convert the modules to a format the manager understands
-        x.data.modules.forEach(m => {
-          const path = getModulePath(x.data.modules, x.data.directories, m.id);
-          moduleObject[path] = {
-            path,
-            code: m.code,
-          };
-        });
-
-        if (!moduleObject['/package.json']) {
-          moduleObject['/package.json'] = {
-            code: generateFileFromSandbox(x.data),
-            path: '/package.json',
-          };
-        }
-
-        const data = {
-          sandboxId: id,
-          modules: moduleObject,
-          entry: '/' + x.data.entry,
-          externalResources: x.data.externalResources,
-          dependencies: x.data.npmDependencies,
-          customNpmRegistries: x.data.npmRegistries,
-          hasActions: false,
-          template: x.data.template,
-          version: 3,
-          disableDependencyPreprocessing: document.location.search.includes(
-            'csb-dynamic-download'
-          ),
-        };
-
-        compile(data);
-      });
-  }
 });
 
 /**
