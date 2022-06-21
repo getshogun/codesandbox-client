@@ -517,7 +517,7 @@ export class TranspiledModule {
         ...transpilerOptions,
       },
       webpack: true,
-      sourceMap: true,
+      sourceMap: false,
       target: 'web',
       _module: this,
       path: this.module.path,
@@ -1057,7 +1057,11 @@ export class TranspiledModule {
           .then(result => interopRequireWildcard(result));
 
       const code =
-        this.source.compiledCode +
+        // we don't need source maps
+        this.source.compiledCode.replace(
+          /\/\/# sourceMappingURL=(.*).map/,
+          '\n'
+        ) +
         `\n//# sourceURL=${location.origin}${this.module.path}${
           this.query ? `?${this.hash}` : ''
         }`;
