@@ -839,6 +839,12 @@ export default class Manager implements IEvaluator {
 
         endMeasure(measureKey, { silent: true, lastTime: measureStartTime });
 
+        // there is an edge case where this.resetResolverCache has been called while we have been waiting for await resolveAsync
+        // ensure this.cachedPaths[dirredPath] is set so we don't get property is undefined error
+        // https://getshogun.atlassian.net/browse/STFT-2552
+        if (this.cachedPaths[dirredPath] === undefined) {
+          this.cachedPaths[dirredPath] = {};
+        }
         this.cachedPaths[dirredPath][path] = resolvedPath;
 
         if (resolvedPath === '//empty.js') {
